@@ -1,9 +1,11 @@
 package se233.chapter2.controller;
 
 import javafx.scene.control.TextInputDialog;
+import org.json.JSONException;
 import se233.chapter2.Launcher;
 import se233.chapter2.model.Currency;
 import se233.chapter2.model.CurrencyEntity;
+import se233.chapter2.model.Symbol;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -19,25 +21,35 @@ public class AllEventHandler {
     }
 
     public static void onAdd() {
-        try {
-            TextInputDialog dialog = new TextInputDialog();
-            dialog.setTitle("Add Currency");
-            dialog.setContentText("Currency Code:");
-            dialog.setHeaderText(null);
-            dialog.setGraphic(null);
-            Optional<String> code = dialog.showAndWait();
-            if (code.isPresent()) {
-                ArrayList<Currency> currency_list = Launcher.getCurrencyList();
-                Currency c = new Currency(code.get());
-                ArrayList<CurrencyEntity> c_list = FetchData.fetch_range(c.getShortCode(), 8);
-                c.setHistorical(c_list);
-                c.setCurrent(c_list.get(c_list.size() - 1));
-                currency_list.add(c);
-                Launcher.setCurrencyList(currency_list);
-                Launcher.refreshPane();
+        boolean isError = false;
+        while (true) {
+            try {
+                TextInputDialog dialog = new TextInputDialog();
+                dialog.setTitle("Add Currency");
+                if (isError) {
+                    dialog.setContentText("Invalid Currency Code\nPlease enter the currency code again");
+                } else {
+                    dialog.setContentText("Please enter the currency code");
+                }
+                dialog.setHeaderText(null);
+                dialog.setGraphic(null);
+                Optional<String> code = dialog.showAndWait();
+                if (code.isPresent()) {
+                    ArrayList<Currency> currency_list = Launcher.getCurrencyList();
+                    Currency c = new Currency(code.get().toUpperCase());
+                    ArrayList<CurrencyEntity> c_list = FetchData.fetch_range(c.getShortCode(), 30, Launcher.getBaseSymbol().getShortCode());
+                    c.setHistorical(c_list);
+                    c.setCurrent(c_list.get(c_list.size() - 1));
+                    currency_list.add(c);
+                    Launcher.setCurrencyList(currency_list);
+                    Launcher.refreshPane();
+                }
+                break;
+            } catch (ExecutionException | InterruptedException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                isError = true;
             }
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
         }
     }
 
@@ -51,6 +63,16 @@ public class AllEventHandler {
                 }
             }
             Launcher.setCurrencyList(currency_list);
+            Launcher.refreshPane();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void onUnwatch(Currency currency) {
+        currency.setWatch(false);
+        currency.setWatchRate(0.0);
+        try {
             Launcher.refreshPane();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
@@ -81,6 +103,14 @@ public class AllEventHandler {
                 Launcher.setCurrencyList(currency_list);
                 Launcher.refreshPane();
             }
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+    public static void onBaseCurrencyChange(Symbol symbol) {
+        try {
+            Launcher.setBaseSymbol(symbol);
+            Launcher.refreshPane();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }

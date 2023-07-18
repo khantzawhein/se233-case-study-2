@@ -17,10 +17,11 @@ import java.util.Iterator;
 public class FetchData {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    public static ArrayList<CurrencyEntity> fetch_range(String src, int N) {
+    public static ArrayList<CurrencyEntity> fetch_range(String src, int N, String base) {
+
         String dateEnd = LocalDate.now().format(formatter);
         String dateStart = LocalDate.now().minusDays(N).format(formatter);
-        String url_str = String.format("https://api.exchangerate.host/timeseries?start_date=%s&end_date=%s&base=THB&symbols=%s", dateStart, dateEnd, src);
+        String url_str = String.format("https://api.exchangerate.host/timeseries?start_date=%s&end_date=%s&base=%s&symbols=%s", dateStart, dateEnd, base, src);
         ArrayList<CurrencyEntity> histList = new ArrayList<>();
         String retrievedJson = null;
         try {

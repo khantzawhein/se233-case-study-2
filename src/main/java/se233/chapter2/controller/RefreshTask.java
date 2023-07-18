@@ -12,7 +12,7 @@ public class RefreshTask extends Task<Void> {
     protected Void call() {
         while (true) {
             try {
-                Thread.sleep(6000);
+                Thread.sleep(60000);
             } catch (InterruptedException e) {
                 System.out.println("RefreshTask interrupted");
             }

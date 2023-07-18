@@ -20,6 +20,7 @@ public class DrawGraphTask implements Callable<VBox> {
 
     @Override
     public VBox call() throws Exception {
+        System.out.println(Thread.currentThread().getName());
         VBox graphPane = new VBox(10);
         graphPane.setPadding(new Insets(0, 25, 5, 25));
         CategoryAxis xAxis = new CategoryAxis();

@@ -1,5 +1,8 @@
 package se233.chapter2.model;
 
+import se233.chapter2.Launcher;
+import se233.chapter2.controller.FetchData;
+
 import java.util.ArrayList;
 
 public class Currency {
@@ -53,5 +56,11 @@ public class Currency {
 
     public void setWatchRate(Double watchRate) {
         this.watchRate = watchRate;
+    }
+
+    public void refresh() {
+        ArrayList<CurrencyEntity> currencyEntities = FetchData.fetch_range(this.shortCode, 30, Launcher.getBaseSymbol().getShortCode());
+        this.setHistorical(currencyEntities);
+        this.setCurrent(currencyEntities.get(currencyEntities.size() - 1));
     }
 }
