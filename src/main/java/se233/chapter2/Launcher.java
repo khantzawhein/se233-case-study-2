@@ -1,8 +1,7 @@
 package se233.chapter2;
 
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.concurrent.Task;
+
 import javafx.scene.Scene;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
@@ -18,8 +17,6 @@ import se233.chapter2.view.TopPane;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class Launcher extends Application {
     private static Stage primaryStage;
@@ -50,6 +47,10 @@ public class Launcher extends Application {
         Thread t = new Thread(r);
         t.setDaemon(true);
         t.start();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
     }
 
     public static void refreshPane() throws InterruptedException, ExecutionException {
